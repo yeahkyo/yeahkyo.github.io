@@ -8,7 +8,7 @@ comments: true
 Let's begin with tiny pieces of things that I've already met with about migrating
 your iOS app to iOS 9.
 
-* App Transport Security. Aka ATS
+#### App Transport Security. Aka ATS
 iOS 9 requires all content from internet downloaded via SSL. So we should check our
 app's CDN or something, to make sure they support HTTPS.
 Event thongh you can set NSAppTransportSecurity with a key-value pair NSAllowsArbitaryLoads:YES
@@ -16,7 +16,7 @@ in application's info.plist to make your app work well temporary, but when you d
 iOS 9, it will be good for you to adop ATS.
 
 
-* UIWindow must have a root view controller
+#### UIWindow must have a root view controller
 It's a good practice to set root view controller to all windows that appear in your
 app. From iOS 9 on, it's the only way preventing your app from crash.
 I thought this might be important for supporting multiple window in iOS 9, which is
