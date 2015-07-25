@@ -3,6 +3,7 @@ layout: post
 title: "OK, iOS 9"
 date: 2015-07-24 23:38:35 +0800
 comments: true
+category: iOS
 ---
 
 Let's begin with tiny pieces of things that I've already met with about migrating
