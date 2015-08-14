@@ -4,10 +4,10 @@ title: "OK, iOS 9"
 date: 2015-07-24 23:38:35 +0800
 comments: true
 category: iOS
+
 ---
 
-Let's begin with tiny pieces of things that I've already met with about migrating
-your iOS app to iOS 9.
+关于为iOS9开发的内容我们分为两个部分来讲，首先如果你还不准备利用iOS9的新特性来给用户带来新的体验，只是想确保你已有的App在iOS9上能正常的使用，那么可以读一下这一篇，我会为你介绍一些在升级时你必须要注意的点。后续的文章我会讲一讲iOS9的新特性。
 
 #### App Transport Security. Aka ATS
 iOS 9 requires all content from internet downloaded via SSL. So we should check our
