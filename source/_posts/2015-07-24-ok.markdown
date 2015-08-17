@@ -3,7 +3,7 @@ layout: post
 title: "Privacy About iOS 9"
 date: 2015-07-24 23:38:35 +0800
 comments: true
-category: iOS,WWDC Notes
+category: [iOS, WWDC Notes]
 
 ---
 WWDC15 Session 703, 「Privacy and Your App」
