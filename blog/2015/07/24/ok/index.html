@@ -3,11 +3,11 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>OK, iOS 9 - Yeah,</title>
+	<title>Privacy About iOS 9 - Yeah,</title>
 	<meta name="author" content="Yeah">
 
 	
-	<meta name="description" content="关于为iOS9开发的内容我们分为两个部分来讲，首先如果你还不准备利用iOS9的新特性来给用户带来新的体验，只是想确保你已有的App在iOS9上能正常的使用，那么可以读一下这一篇，我会为你介绍一些在升级时你必须要注意的点。后续的文章我会讲一讲iOS9的新特性。 App Transport &hellip;">
+	<meta name="description" content="WWDC15 Session 703, 「Privacy and Your App」 App Transport Security. Aka ATS iOS 9.0引入了App Transport Security的功能，所有使用NSURLConnection、 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -74,23 +74,59 @@
 		
 	
 	<div id="content" class="inner"><article class="post">
-	<h2 class="title">OK, iOS 9</h2>
-	<div class="entry-content"><p>关于为iOS9开发的内容我们分为两个部分来讲，首先如果你还不准备利用iOS9的新特性来给用户带来新的体验，只是想确保你已有的App在iOS9上能正常的使用，那么可以读一下这一篇，我会为你介绍一些在升级时你必须要注意的点。后续的文章我会讲一讲iOS9的新特性。</p>
+	<h2 class="title">Privacy About iOS 9</h2>
+	<div class="entry-content"><p>WWDC15 Session 703, 「Privacy and Your App」</p>
 
-<h4>App Transport Security. Aka ATS</h4>
+<h3>App Transport Security. Aka ATS</h3>
 
-<p>iOS 9 requires all content from internet downloaded via SSL. So we should check our
-app&rsquo;s CDN or something, to make sure they support HTTPS.
-Event thongh you can set NSAppTransportSecurity with a key-value pair NSAllowsArbitaryLoads:YES
-in application&rsquo;s info.plist to make your app work well temporary, but when you determine to support
-iOS 9, it will be good for you to adop ATS.</p>
+<p>iOS 9.0引入了App Transport Security的功能，所有使用NSURLConnection、CFURL和NSURLSession的连接都默认支持。当然，如果你使用基于这些Apple官方技术的其他开源库也一样要注意这一新功能。</p>
 
-<h4>UIWindow must have a root view controller</h4>
+<p>既然Apple已经把ATS作为默认行为加到了网络库里，我们还要做什么呢？当然是让服务端也与客户端对应，也支持安全链接。<br/>
+直接把你的应用编译到iOS 9上，如果你发现，图片、音乐和其他一些从网络获取资源都不能正常使用了，就是因为你的客户端采用了ATS，但服务端并没有满足它的要求。我们看看官方文档，发现使用ATS的App所访问的web服务需要满足这三个条件才能正常工作：</p>
 
-<p>It&rsquo;s a good practice to set root view controller to all windows that appear in your
-app. From iOS 9 on, it&rsquo;s the only way preventing your app from crash.
-I thought this might be important for supporting multiple window in iOS 9, which is
-really a good new feature.</p>
+<ul>
+<li>The protocol Transport Security Layer (TLS) must be at least version 1.2.</li>
+<li>Connection ciphers are limited to those that provide forward secrecy (see the list of ciphers below.)</li>
+<li>Certificates must use at least an SHA256 fingerprint with either a 2048 bit or greater RSA key, or a 256 bit or greater Elliptic-Curve (ECC) key.</li>
+</ul>
+
+
+<p>现在，切换我们原来的HTTP服务，给他们加上TLS支持吧。
+当然，如果你使用了第三方服务，一时来不及切换所有资源到HTTPS下，也可以在Info.plist中设置关闭ATS，或者对某些指定的域名设置ATS，让App在iOS 9下能正常工作。与ATS相关的key是「NSAppTransportSecurity」，它接收一个Dictionary来描述我们的设置。「NSAllowsArbitraryLoads」接收BOOL值指示是否关闭默认的ATS；「NSExceptionDomains」可以给出一些列的域名，对这些域名进行详细设置，如设置TLS的最低要求版本、允许不安全链接等等。</p>
+
+<p>不管怎样，我们还是应该尽快的支持好ATS，让App跑得更安全才是明路。</p>
+
+<h3>LSApplicationQueriesSchemes</h3>
+
+<p>在iOS 8.3以前，想要检测其他App是否在设备上安装了，我们可以用底层的sysctl()来获取当前正在运行的进程列表，然后看看是否有想要的App；也可以通过[UIApplication sharedApplication] canOpenUrl:]来判断是否有应用程序能接受满足这个URL的scheme.现在iOS 9下，我们可能要改变一下我们的实现了。</p>
+
+<ul>
+<li>在iOS 9中已经不能再查看当前运行的程序列表了。</li>
+<li>使用canOpenUrl的方法也有变动，需要在info.plist里添加LSApplicationQueriesSchemes明确列出我们的App需要访问的URL Schemes，这样canOpenUrl才会在想访问的App已安装的情况下返回YES。也只有这样，openURL才能正常的唤起目标App。</li>
+</ul>
+
+
+<h3>Universal Links</h3>
+
+<p>iOS 9新增了Universal Links，旨在替代URL Schemes。 [TODO]</p>
+
+<h3>MAC Address Randomization</h3>
+
+<p>[TODO]</p>
+
+<h3>Safari Content Blocker</h3>
+
+<p>[TODO]</p>
+
+<h3>Deep App Search</h3>
+
+<p>[TODO]
+NSUserActivity API
+CoreSpotlight</p>
+
+<h3>Data Protection</h3>
+
+<p>[TODO]</p>
 </div>
 
 
@@ -104,7 +140,7 @@ Jul 24th, 2015</div>
 	<div class="tags">
 
 
-	<a class='category' href='/blog/categories/ios/'>ios</a>
+	<a class='category' href='/blog/categories/ios-wwdc-notes/'>ios,wwdc notes</a>
 
 
 </div>
