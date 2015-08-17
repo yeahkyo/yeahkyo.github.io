@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Yeah,]]></title>
-  <link href="http://yeahkyo.github.io/atom.xml" rel="self"/>
+  <title><![CDATA[Category: wwdc notes | Yeah,]]></title>
+  <link href="http://yeahkyo.github.io/blog/categories/wwdc-notes/atom.xml" rel="self"/>
   <link href="http://yeahkyo.github.io/"/>
   <updated>2015-08-18T03:03:35+08:00</updated>
   <id>http://yeahkyo.github.io/</id>

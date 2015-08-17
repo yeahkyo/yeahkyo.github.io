@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: ios,wwdc notes | Yeah,]]></title>
-  <link href="http://yeahkyo.github.io/blog/categories/ios-wwdc-notes/atom.xml" rel="self"/>
+  <title><![CDATA[Category: ios | Yeah,]]></title>
+  <link href="http://yeahkyo.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://yeahkyo.github.io/"/>
-  <updated>2015-08-18T02:44:15+08:00</updated>
+  <updated>2015-08-18T03:03:35+08:00</updated>
   <id>http://yeahkyo.github.io/</id>
   <author>
     <name><![CDATA[Yeah]]></name>
