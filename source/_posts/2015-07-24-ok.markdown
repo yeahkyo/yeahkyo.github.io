@@ -28,20 +28,3 @@ iOS 9.0引入了App Transport Security的功能，所有使用NSURLConnection、
 
 * 在iOS 9中已经不能再查看当前运行的程序列表了。
 * 使用canOpenUrl的方法也有变动，需要在info.plist里添加LSApplicationQueriesSchemes明确列出我们的App需要访问的URL Schemes，这样canOpenUrl才会在想访问的App已安装的情况下返回YES。也只有这样，openURL才能正常的唤起目标App。
-
-### Universal Links
-iOS 9新增了Universal Links，旨在替代URL Schemes。 [TODO]
-
-### MAC Address Randomization
-[TODO]
-
-### Safari Content Blocker
-[TODO]
-
-### Deep App Search
-[TODO]
-NSUserActivity API
-CoreSpotlight
-
-### Data Protection
-[TODO]
