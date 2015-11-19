@@ -4,7 +4,7 @@
   <title><![CDATA[Category: wwdc notes | Yeah,]]></title>
   <link href="http://yeahkyo.github.io/blog/categories/wwdc-notes/atom.xml" rel="self"/>
   <link href="http://yeahkyo.github.io/"/>
-  <updated>2015-11-02T14:36:33+08:00</updated>
+  <updated>2015-11-19T17:20:34+08:00</updated>
   <id>http://yeahkyo.github.io/</id>
   <author>
     <name><![CDATA[Yeah]]></name>
@@ -48,28 +48,6 @@
 <li>使用canOpenUrl的方法也有变动，需要在info.plist里添加LSApplicationQueriesSchemes明确列出我们的App需要访问的URL Schemes，这样canOpenUrl才会在想访问的App已安装的情况下返回YES。也只有这样，openURL才能正常的唤起目标App。</li>
 </ul>
 
-
-<h3>Universal Links</h3>
-
-<p>iOS 9新增了Universal Links，旨在替代URL Schemes。 [TODO]</p>
-
-<h3>MAC Address Randomization</h3>
-
-<p>[TODO]</p>
-
-<h3>Safari Content Blocker</h3>
-
-<p>[TODO]</p>
-
-<h3>Deep App Search</h3>
-
-<p>[TODO]
-NSUserActivity API
-CoreSpotlight</p>
-
-<h3>Data Protection</h3>
-
-<p>[TODO]</p>
 ]]></content>
   </entry>
   
