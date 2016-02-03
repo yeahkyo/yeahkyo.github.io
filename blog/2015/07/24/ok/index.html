@@ -81,6 +81,11 @@
 
 <p>iOS 9.0引入了App Transport Security的功能，所有使用NSURLConnection、CFURL和NSURLSession的连接都默认支持。当然，如果你使用基于这些Apple官方技术的其他开源库也一样要注意这一新功能。</p>
 
+<!-- more -->
+
+
+<p></p>
+
 <p>既然Apple已经把ATS作为默认行为加到了网络库里，我们还要做什么呢？当然是让服务端也与客户端对应，也支持安全链接。<br/>
 直接把你的应用编译到iOS 9上，如果你发现，图片、音乐和其他一些从网络获取资源都不能正常使用了，就是因为你的客户端采用了ATS，但服务端并没有满足它的要求。我们看看官方文档，发现使用ATS的App所访问的web服务需要满足这三个条件才能正常工作：</p>
 
@@ -140,7 +145,7 @@ Jul 24th, 2015</div>
 
 
 </div>
-	<footer id="footer" class="inner">Copyright &copy; 2015
+	<footer id="footer" class="inner">Copyright &copy; 2016
 
     Yeah
 

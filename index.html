@@ -7,9 +7,7 @@
 	<meta name="author" content="Yeah">
 
 	
-	<meta name="description" content="最近在练手用一些平时不太常用的工具做东西，纯CSS3的动画和渐变之前了解过但是没正儿八经写过，这一次以做一个常见的按钮状态渐变为目标。 CSS3 Transitions 给页面元素的某些CSS属性加上一个transition之后，这个元素的属性变化时就会由浏览器自动完成补间的动画。 1
-2
-3 &hellip;">
+	<meta name="description" content=" 最近在练手用一些平时不太常用的工具做东西，纯CSS3的动画和渐变之前了解过但是没正儿八经写过，这一次以做一个常见的按钮状态渐变为目标。 Read on &rarr; Nov 2nd, 2015 web ">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -88,271 +86,9 @@
 	<div class="entry-content">
 		<p>最近在练手用一些平时不太常用的工具做东西，纯CSS3的动画和渐变之前了解过但是没正儿八经写过，这一次以做一个常见的按钮状态渐变为目标。</p>
 
-<h3>CSS3 Transitions</h3>
-
-<p>给页面元素的某些CSS属性加上一个transition之后，这个元素的属性变化时就会由浏览器自动完成补间的动画。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='scss'><span class='line'><span class="nc">.some-element</span> <span class="p">{</span>
-</span><span class='line'>  <span class="na">transition</span><span class="o">:</span> <span class="no">width</span> <span class="mi">2</span><span class="kt">s</span> <span class="n">ease-in-out</span> <span class="mi">0</span><span class="mf">.5</span><span class="kt">s</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>所有.some-element的元素，当它的width变化时，这个变化过程会由一个2秒的动画来过渡完成。ease-in-out表示动画的速度是渐进渐出的，而且会延迟0.5秒触发。</p>
-
-<p>这里是一个transition简写的例子，其实是把transition-property transition-duration transition-timing-fuction transition-delay融到了一起，详细的解释大家可以看看CSS3的官方文档。</p>
-
-<p>除了常用的CSS属性，如width height background-color等等。我们还可以利用CSS3的transforms来灵活改变元素在页面上的显示。</p>
-
-<p>在很多平台上我们都能利用一些坐标变换来完成图像的变形，现在CSS3推进它来到了web浏览器上。
-常用的transform函数主要有下面几个</p>
-
-<ul>
-<li>translate() ： 坐标平移</li>
-<li>rotate()    ： 坐标旋转</li>
-<li>scale()     ： 缩放</li>
-<li>skew()      ： 倾斜</li>
-<li>matrix()    ： 矩阵变换</li>
-</ul>
-
-
-<h3>Code：按钮动画</h3>
-
-<p>菜单按钮在未激活的状态下呈现「三明治」图案，激活状态下呈现「X」（叉）的图案。中间用CSS3的transform+transition来和谐过渡。</p>
-
-<p>在页面添加一个简单的按钮，用来做练习。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;button</span> <span class="na">class=</span><span class="s">&quot;menu-button&quot;</span> <span class="na">onclick=</span><span class="s">&quot;$(this).toggleClass(&#39;active&#39;)&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>   <span class="nt">&lt;span&gt;&lt;/span&gt;</span>
-</span><span class='line'><span class="nt">&lt;/button&gt;</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>利用span和它的::before和::after selector来画三条线。
-menu-button切换到active状态时，::before的线（上面的线）和::after的线(下面的线）做top与transform两种变换。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-</pre></td><td class='code'><pre><code class='scss'><span class='line'><span class="nc">.menu-button</span> <span class="p">{</span>
-</span><span class='line'>  <span class="na">border</span><span class="o">:</span> <span class="no">none</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">width</span><span class="o">:</span> <span class="mi">50</span><span class="kt">px</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">height</span><span class="o">:</span> <span class="mi">50</span><span class="kt">px</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">background-color</span><span class="o">:</span> <span class="ni">orange</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">border-radius</span><span class="o">:</span> <span class="mi">25</span><span class="kt">px</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">position</span><span class="o">:</span> <span class="no">relative</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">right</span><span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">bottom</span><span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">outline</span><span class="o">:</span> <span class="no">none</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>  
-</span><span class='line'><span class="na">.menu-button</span><span class="err"> </span><span class="na">span,</span>
-</span><span class='line'><span class="na">.menu-button</span><span class="err"> </span><span class="na">span</span><span class="o">::</span><span class="n">before</span><span class="o">,</span>
-</span><span class='line'><span class="o">.</span><span class="n">menu-button</span> <span class="n">span</span><span class="o">::</span><span class="n">after</span> <span class="p">{</span>
-</span><span class='line'>  <span class="na">background</span><span class="o">:</span> <span class="nb">white</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">height</span><span class="o">:</span> <span class="mi">4</span><span class="kt">px</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">position</span><span class="o">:</span> <span class="no">absolute</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">display</span><span class="o">:</span> <span class="no">block</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">border-radius</span><span class="o">:</span> <span class="mi">2</span><span class="kt">px</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="nc">.menu-button</span> <span class="nt">span</span> <span class="p">{</span>
-</span><span class='line'>  <span class="na">top</span><span class="o">:</span> <span class="mi">23</span><span class="kt">px</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">left</span><span class="o">:</span> <span class="mi">10</span><span class="kt">px</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">right</span><span class="o">:</span> <span class="mi">10</span><span class="kt">px</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="na">transition</span><span class="o">:</span> <span class="no">background</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span> <span class="mi">0</span><span class="kt">s</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="na">.menu-button</span><span class="err"> </span><span class="na">span</span><span class="o">::</span><span class="n">before</span> <span class="p">{</span>
-</span><span class='line'>  <span class="na">top</span><span class="o">:</span> <span class="mi">-8</span><span class="kt">px</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">width</span><span class="o">:</span> <span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">content</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="na">transition</span><span class="o">:</span> <span class="no">top</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span><span class="o">,</span> <span class="n">transform</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span> <span class="mi">0</span><span class="kt">s</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="na">.menu-button</span><span class="err"> </span><span class="na">span</span><span class="o">::</span><span class="n">after</span> <span class="p">{</span>
-</span><span class='line'>  <span class="na">top</span><span class="o">:</span> <span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">content</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
-</span><span class='line'>  <span class="na">width</span><span class="o">:</span> <span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="na">transition</span><span class="o">:</span> <span class="no">top</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span><span class="o">,</span> <span class="n">transform</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span> <span class="mi">0</span><span class="kt">s</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="nc">.menu-button.active</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nt">span</span> <span class="p">{</span>
-</span><span class='line'>    <span class="na">background</span><span class="o">:</span> <span class="no">none</span><span class="p">;</span>
-</span><span class='line'>    <span class="na">transition</span><span class="o">:</span> <span class="no">background</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="na">span</span><span class="o">::</span><span class="n">before</span> <span class="p">{</span>
-</span><span class='line'>    <span class="na">top</span><span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>    <span class="na">transform</span><span class="o">:</span> <span class="nf">rotate</span><span class="p">(</span><span class="mi">45</span><span class="kt">deg</span><span class="p">);</span>
-</span><span class='line'>    <span class="na">transition</span><span class="o">:</span> <span class="no">top</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span> <span class="mi">0</span><span class="kt">s</span><span class="o">,</span> <span class="n">transform</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="na">span</span><span class="o">::</span><span class="n">after</span> <span class="p">{</span>
-</span><span class='line'>    <span class="na">top</span><span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>    <span class="na">transform</span><span class="o">:</span> <span class="nf">rotate</span><span class="p">(</span><span class="mi">-45</span><span class="kt">deg</span><span class="p">);</span>
-</span><span class='line'>    <span class="na">transition</span><span class="o">:</span> <span class="no">top</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span> <span class="mi">0</span><span class="kt">s</span><span class="o">,</span> <span class="n">transform</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span> <span class="mi">0</span><span class="mf">.3</span><span class="kt">s</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>浏览器支持</h3>
-
-<p>想要在实际项目中使用CSS3的新技术还得考虑到浏览器的支持问题，想IE、Chrome、Firefox、Opera等常用浏览器最新的版本都支持大部分CSS3新特性，但是之前的版本或不完全支持，或需要特定的前缀来描述。</p>
-
-<p>所以，像上面的例子，</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='scss'><span class='line'><span class="na">transform</span><span class="o">:</span> <span class="nf">rotate</span><span class="p">(</span><span class="mi">45</span><span class="kt">deg</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>只是个标准语句，要想支持各种浏览器内核的稍早版本，需要这样写</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='scss'><span class='line'><span class="na">-web-kit-transform</span><span class="o">:</span> <span class="nf">rotate</span><span class="p">(</span><span class="mi">45</span><span class="kt">deg</span><span class="p">);</span>
-</span><span class='line'><span class="na">-o-transform</span><span class="o">:</span> <span class="nf">rotate</span><span class="p">(</span><span class="mi">45</span><span class="kt">deg</span><span class="p">);</span>
-</span><span class='line'><span class="na">-moz-transform</span><span class="o">:</span> <span class="nf">rotate</span><span class="p">(</span><span class="mi">45</span><span class="kt">deg</span><span class="p">);</span>
-</span><span class='line'><span class="na">-ms-transform</span><span class="o">:</span> <span class="nf">rotate</span><span class="p">(</span><span class="mi">45</span><span class="kt">deg</span><span class="p">);</span>
-</span><span class='line'><span class="na">transform</span><span class="o">:</span> <span class="nf">rotate</span><span class="p">(</span><span class="mi">45</span><span class="kt">deg</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这未免有点麻烦，现在有很多第三方框架为我们更方便的使用CSS3的特性提供了工具，这里推荐一下Compass。</p>
-
-<h3>Compass</h3>
-
-<p>像上面说的浏览器对新特性的支持问题，Compass利用SASS的mixin为我们提供了很多helper方法，让我们不用写一大堆冗余的语句，比如CSS3的border-radius属性，可以方便的设置圆角，但是很多早期浏览器并不支持这个标准属性，而是在当时暂时支持了自己内核的一个替代属性，如 -webkit-border-radius。</p>
-
-<p>Compass则封装了一个border-radius($radius方法)，我们只需在自定义的样式里，@include border-radius(4px)即可。</p>
-
-<p>border-raduis()源码</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='scss'><span class='line'><span class="k">@mixin</span><span class="nf"> border-radius</span><span class="p">(</span><span class="nv">$radius</span><span class="o">:</span> <span class="nv">$default-border-radius</span><span class="o">,</span> <span class="nv">$vertical-radius</span><span class="o">:</span> <span class="n-Pseudo">false</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">@include</span><span class="nd"> with-each-prefix</span><span class="p">(</span><span class="no">border</span><span class="o">-</span><span class="n">radius</span><span class="o">,</span> <span class="nv">$border-radius-threshold</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">@if</span> <span class="nv">$current-prefix</span> <span class="o">==</span> <span class="o">-</span><span class="n">webkit</span> <span class="p">{</span>
-</span><span class='line'>      <span class="c1">// Legacy Webkit didn&#39;t understand the official shorthand syntax for specifying a vertical radius.</span>
-</span><span class='line'>      <span class="nv">$legacy-webkit-radius</span><span class="o">:</span> <span class="nf">first-value-of</span><span class="p">(</span><span class="nv">$radius</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">@if</span> <span class="nv">$vertical-radius</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nv">$legacy-webkit-radius</span><span class="o">:</span> <span class="nf">append</span><span class="p">(</span><span class="nv">$legacy-webkit-radius</span><span class="o">,</span> <span class="nf">first-value-of</span><span class="p">(</span><span class="nv">$vertical-radius</span><span class="p">));</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>      <span class="k">@include</span><span class="nd"> prefix-prop</span><span class="p">(</span><span class="no">border</span><span class="o">-</span><span class="n">radius</span><span class="o">,</span> <span class="nv">$legacy-webkit-radius</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">@else</span> <span class="p">{</span>
-</span><span class='line'>      <span class="c1">// Official syntax for everyone else</span>
-</span><span class='line'>      <span class="k">@include</span><span class="nd"> prefix-prop</span><span class="p">(</span><span class="no">border</span><span class="o">-</span><span class="n">radius</span><span class="o">,</span> <span class="nf">if</span><span class="p">(</span><span class="nv">$vertical-radius</span><span class="o">,</span> <span class="si">#{</span><span class="nv">$radius</span><span class="si">}</span> <span class="o">/</span> <span class="si">#{</span><span class="nv">$vertical-radius</span><span class="si">}</span><span class="o">,</span> <span class="nv">$radius</span><span class="p">));</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>除了提供CSS3的helpers外，Compass还带来了很多实用的功能，这里提一下方便选择使用。</p>
-
-<ul>
-<li>Spirte: 提供多张图片就能完成一个简单的精灵对象。</li>
-<li>Verticle Rhythm帮助我们更好的布局</li>
-<li>Variables 提供很多Globle的CSS变量</li>
-<li>etc.</li>
-</ul>
-
 
 		
-		
+		<a href="/blog/2015/11/02/css3-transition/" class="more-link">Read on &rarr;</a>
 	</div>
 
 
@@ -389,33 +125,9 @@ Nov 2nd, 2015</div>
 
 <p>iOS 9.0引入了App Transport Security的功能，所有使用NSURLConnection、CFURL和NSURLSession的连接都默认支持。当然，如果你使用基于这些Apple官方技术的其他开源库也一样要注意这一新功能。</p>
 
-<p>既然Apple已经把ATS作为默认行为加到了网络库里，我们还要做什么呢？当然是让服务端也与客户端对应，也支持安全链接。<br/>
-直接把你的应用编译到iOS 9上，如果你发现，图片、音乐和其他一些从网络获取资源都不能正常使用了，就是因为你的客户端采用了ATS，但服务端并没有满足它的要求。我们看看官方文档，发现使用ATS的App所访问的web服务需要满足这三个条件才能正常工作：</p>
-
-<ul>
-<li>The protocol Transport Security Layer (TLS) must be at least version 1.2.</li>
-<li>Connection ciphers are limited to those that provide forward secrecy (see the list of ciphers below.)</li>
-<li>Certificates must use at least an SHA256 fingerprint with either a 2048 bit or greater RSA key, or a 256 bit or greater Elliptic-Curve (ECC) key.</li>
-</ul>
-
-
-<p>现在，切换我们原来的HTTP服务，给他们加上TLS支持吧。
-当然，如果你使用了第三方服务，一时来不及切换所有资源到HTTPS下，也可以在Info.plist中设置关闭ATS，或者对某些指定的域名设置ATS，让App在iOS 9下能正常工作。与ATS相关的key是「NSAppTransportSecurity」，它接收一个Dictionary来描述我们的设置。「NSAllowsArbitraryLoads」接收BOOL值指示是否关闭默认的ATS；「NSExceptionDomains」可以给出一些列的域名，对这些域名进行详细设置，如设置TLS的最低要求版本、允许不安全链接等等。</p>
-
-<p>不管怎样，我们还是应该尽快的支持好ATS，让App跑得更安全才是明路。</p>
-
-<h3>LSApplicationQueriesSchemes</h3>
-
-<p>在iOS 8.3以前，想要检测其他App是否在设备上安装了，我们可以用底层的sysctl()来获取当前正在运行的进程列表，然后看看是否有想要的App；也可以通过[UIApplication sharedApplication] canOpenUrl:]来判断是否有应用程序能接受满足这个URL的scheme.现在iOS 9下，我们可能要改变一下我们的实现了。</p>
-
-<ul>
-<li>在iOS 9中已经不能再查看当前运行的程序列表了。</li>
-<li>使用canOpenUrl的方法也有变动，需要在info.plist里添加LSApplicationQueriesSchemes明确列出我们的App需要访问的URL Schemes，这样canOpenUrl才会在想访问的App已安装的情况下返回YES。也只有这样，openURL才能正常的唤起目标App。</li>
-</ul>
-
 
 		
-		
+		<a href="/blog/2015/07/24/ok/" class="more-link">Read on &rarr;</a>
 	</div>
 
 
@@ -443,7 +155,7 @@ Jul 24th, 2015</div>
     <div class="center"><a href="/blog/archives">Blog Archives</a></div>
 </nav>
 </div>
-	<footer id="footer" class="inner">Copyright &copy; 2015
+	<footer id="footer" class="inner">Copyright &copy; 2016
 
     Yeah
 

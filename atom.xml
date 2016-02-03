@@ -4,7 +4,7 @@
   <title><![CDATA[Yeah,]]></title>
   <link href="http://yeahkyo.github.io/atom.xml" rel="self"/>
   <link href="http://yeahkyo.github.io/"/>
-  <updated>2015-11-19T17:20:34+08:00</updated>
+  <updated>2016-02-04T01:25:38+08:00</updated>
   <id>http://yeahkyo.github.io/</id>
   <author>
     <name><![CDATA[Yeah]]></name>
@@ -19,6 +19,9 @@
     <updated>2015-11-02T11:50:05+08:00</updated>
     <id>http://yeahkyo.github.io/blog/2015/11/02/css3-transition</id>
     <content type="html"><![CDATA[<p>最近在练手用一些平时不太常用的工具做东西，纯CSS3的动画和渐变之前了解过但是没正儿八经写过，这一次以做一个常见的按钮状态渐变为目标。</p>
+
+<!-- more -->
+
 
 <h3>CSS3 Transitions</h3>
 
@@ -295,6 +298,11 @@ menu-button切换到active状态时，::before的线（上面的线）和::after
 <h3>App Transport Security. Aka ATS</h3>
 
 <p>iOS 9.0引入了App Transport Security的功能，所有使用NSURLConnection、CFURL和NSURLSession的连接都默认支持。当然，如果你使用基于这些Apple官方技术的其他开源库也一样要注意这一新功能。</p>
+
+<!-- more -->
+
+
+<p></p>
 
 <p>既然Apple已经把ATS作为默认行为加到了网络库里，我们还要做什么呢？当然是让服务端也与客户端对应，也支持安全链接。<br/>
 直接把你的应用编译到iOS 9上，如果你发现，图片、音乐和其他一些从网络获取资源都不能正常使用了，就是因为你的客户端采用了ATS，但服务端并没有满足它的要求。我们看看官方文档，发现使用ATS的App所访问的web服务需要满足这三个条件才能正常工作：</p>
