@@ -85,34 +85,34 @@
 <p> CoreData加上SQLite可以帮助我们在客户端使用关系数据库处理比较复杂的需求。</p></li>
 <li><p>Lazy loading</p>
 
-<p> CoreData运用一种叫Faulting的技术，对NSManagedObject的属性、甚至是关联的NSManagedObject对象做了lazy loading。为我们有效的减少了不必要的内存使用。</p>
+<p> CoreData运用一种叫Faulting的技术，实际上就是对NSManagedObject的属性做lazyloading，尤其是关联对象，只有在真正使用到了关联对象的一些属性时才会读取文件。为我们有效的减少了不必要的内存使用。</p>
 
-<p> 举个例子，我们从数据库读取了一个Person对象，它有一个属性是company，对应的另一张叫Company的表里的数据，在我们真正使用company属性之前，person的company指向的其实是一个壳对象(fault)，它并没有加载对应的Company表条目里的数据。</p>
+<p> 举个例子，我们从数据库读取了一个Person对象，它有一个属性是company，对应的另一张叫Company的表里的数据，在我们真正使用关联的company的属性值之前，person的company指向的其实是一个壳对象(fault)，它并没有加载对应的Company表条目里的数据。</p>
 
-<p> 另外提一点的是Uniquing，CoreData为我们保证了对应相同数据的壳对象也会是唯一的，这样就不会出现同一个company的很多个person，在company被真正加载之前指向的却使不同对象。</p></li>
+<p> 另外提一点的是Uniquing技术，CoreData保证了对应相同数据的壳对象也会是相同的，这样就不会出现属于同一个company的很多个员工（person），在company被真正加载之前指向的却是不同对象。实际应用中，对多个fault object调用isEqual:等方法都不会将其激活，也就是不会真正读取数据，但是却能正确的判断对象是否相等。</p></li>
 <li><p>Validation</p>
 
 <p> 在ManagedModel的编辑页面我们可以对每个属性加一些constraints，比如最小值、最大值。之后我们可以用 validateValue:forKey:error: 方法来对做validation。
  如果想对一些属性做更复杂的自定义验证，比如age，实现下面这个方法就可以:</p>
 
-<pre><code class="`"> - (BOOL)validateValue:(inout id _Nullable *)ioValue
-            forKey:(NSString *)key
+<pre><code class="`"> - (BOOL)validateAge:(inout id _Nullable *)ioValue
              error:(out NSError * _Nullable *)outError;
 </code></pre>
 
-<p> 当我们在调用validateValue:forKey:error:时，它不仅会做默认的constraints验证，还会在运行时自动寻找我们的这些自定义验证。</p></li>
+<p> 当我们在调用validateValue:forKey:error:时，它不仅会做默认的constraints验证，还会在运行时自动寻找其他的自定义验证（如上面的validateAge:error:）。</p></li>
 <li><p>Change tracking和undo、redo、rollback</p>
 
-<p> NSManagedObjectContext(MOC)维护着与它关联的ManagedObject的修改记录与当前状态，每一个MOC都拥有一个NSUndoManager，它支持着我们对数据操作的undo、redo、reset、rollback这些操作。
- 如果你完全不需要这些操作，应该考虑把MOC的undoManager设置为nil，这样可以节省不少内存，也省去CoreData做一些不必要的操作。</p></li>
+<p> NSManagedObjectContext(MOC)维护着与它关联的ManagedObject的修改记录与当前状态，每一个MOC都拥有一个NSUndoManager，它支持着我们对数据操作的undo、redo等操作。
+ 如果你完全不需要这些操作，应该考虑把MOC的undoManager设置为nil，这样可以节省不少内存。</p></li>
 <li><p>版本管理、数据迁移</p>
 
-<p> 支持数据版本管理，在应用上线后快速迭代过程中，难以避免会改变数据格式。</p></li>
+<p> 支持数据版本管理，CoreData可以帮助我们将用户老版本的数据迁移到更新后的新数据格式里。
+ 在应用上线后快速迭代过程中，难以避免会改变数据格式，用户更新App时，里面可能还存有以前老版本的数据，而现在数据的格式可能已经变了，这时你就需要做数据迁移升级，要不程序无法兼容老版本数据就可能无法正常使用。</p></li>
 <li><p>多线程</p></li>
 <li><p>数据与UI绑定</p>
 
 <p> 我们可以利用NSFetchResultsController轻松地将TableView与CoreData的数据做绑定。数据的变化也可以利用NSFetchResultsÇontroller的回调更新到TableView上。
- 由于涉及到更新UI的操作，这里用到的MOC一定得是在MainQueue上运行的。</p></li>
+ 由于涉及到更新UI的操作，这里用到的MOC一定得是在主线程上运行的。</p></li>
 <li><p>支持KVO、KVC</p></li>
 <li><p>同步iCloud</p></li>
 </ol>
@@ -165,33 +165,57 @@
 <h3>Advanced Topic</h3>
 
 <ol>
-<li><p>Concurrcy</p></li>
+<li><p>Concurrcy</p>
+
+<p> CoreData的多线程执行，其实就是用多个MOC来操作。因为与UI绑定的操作必须在主线程做，而一旦同时涉及到一些比较耗时的数据处理操作（比如解析JSON数据等），或者saveContext的时候耗时比较长时（超过1/60s），就会引起屏幕卡顿。</p>
+
+<p> iOS5之前，我们可以在子线程中创建临时MOC来做操作，然后让主线程的MOC监听NSManagedObjectContextDidSaveNotification通知，在子线程修改了数据后，主线程MOC负责把这些改动合并过来，然后再做后续的更新UI等操作。</p>
+
+<p> iOS5开始引进了nested context的概念，我们可以生成一个在后台线程运行的MOC并将其parentContext设置为主线程的MOC，这样一来，一旦我们save了子线程MOC，数据改动将会自动合并到其parentContext中。</p>
+
+<p> 解决保存过慢影响流畅性的问题，我们可以考虑把主线程的MOC的parentContext设置为一个后台线程的MOC，由后台MOC来负责最后save到数据库的任务。</p>
+
+<p> 当然也会存在完全不需要绑定UI的情况，比如专门做用户行为数据收集的工具，那么直接不使用主线程MOC就行。</p></li>
 <li><p>数据一致性</p>
 
-<p> 如果涉及多个MOC操作同一个Managed Object的情况，就要留心数据一致性的问题了，就像我们合并代码一样，需要告诉MOC一个mergePolicy。默认情况的策略是NSErrorMergePolicy，一旦出现conflict会在userInfo的conflictList字段返回一个冲突列表，告诉我们哪些属性已经被修改过了，你可以把这些信息转达给用户，或者手动做一些操作后再保存。
- 另外四种策略可以让MOC自动帮我们选择合适的数据保存。 NSMergeByPropertyStoreTrumpMergePolicy:当出现冲突时，保留数据库里已有的数据。
- NSMergeByPropertyObjectTrumpMergePolicy:当出现冲突时，保留当前MOC管理的数据。
- NSOverwriteMergePolicy:无视数据库里的数据版本，直接用当前MOC数据覆盖。
- NSRollbackMergePolicy:如果出现冲突就丢弃当前MOC数据的修改。</p></li>
+<p> 如果涉及多个MOC操作同一个Managed Object的情况，就要留心数据一致性的问题了，就像我们合并代码一样，需要告诉MOC一个mergePolicy。默认情况的策略是NSErrorMergePolicy，一旦出现conflict会在userInfo的conflictList字段返回一个冲突列表，告诉我们哪些属性已经被修改过了，你可以把这些信息转达给用户，或者手动做一些操作后再保存。</p>
+
+<p> 另外四种策略可以让MOC自动帮我们选择合适的数据保存。</p>
+
+<ul>
+<li>NSMergeByPropertyStoreTrumpMergePolicy:当出现冲突时，保留数据库里已有的数据。</li>
+<li>NSMergeByPropertyObjectTrumpMergePolicy:当出现冲突时，保留当前MOC管理的数据。</li>
+<li>NSOverwriteMergePolicy:无视数据库里的数据版本，直接用当前MOC数据覆盖。</li>
+<li>NSRollbackMergePolicy:如果出现冲突就丢弃当前MOC数据的修改。</li>
+</ul>
+</li>
 <li><p>性能优化</p>
 
-<p> If you do not intend to use Core Data’s undo functionality, you can reduce your application&rsquo;s resource requirements by setting the context’s undo manager to nil. This may be especially beneficial for background worker threads, as well as for large import or batch operations.</p>
+<p> 逻辑比较简单可以自己完成数据的撤销等操作，甚至不需要使用undoManager时，可以将其置空，这样可以节约很多存储和运算资源。后台MOC往往可以考虑做一做这个优化。</p>
 
-<p> NSFetchResultsController cache</p></li>
+<p> 另外一个基本的注意事项是，获取数据时尽量不要浪费，使用fetchLimit配合fetchOffset来仅仅取出需要的数量的对象，然后在合适的时候释放他们，以保证内存不会占用过多。例如在使用TableView展示数据时，不要一次性取出所有的对象，这可能会需要相当多的内存，而且初始加载时会等待很久才能看到数据。应该考虑计算出当前需要显示的对象区间，然后每次取出一小部分来显示。</p>
+
+<p> 使用Predicate时可以从SQL借鉴很多好的经验，比如把区分度大的条件放在前面，这在包含了一些费时查询时（比如字符比较）会非常有用，因为可以让参与到费时查询的条目尽可能的少。</p>
+
+<p> 之前提到的Fault Object为我们自动完成了相关对象的lazy loading，可以节省不少不必要内寸。但是另一方面，有时候那些相关对象是必定会很快用到的，这样一来，本来一次文件读取就可以将要用到的对象载入内存，却会被分解到每一个相关对象依次被访问时来读取文件，徒增很多次文件操作，而文件读取是相对比较耗时的，这就浪费了计算资源。有两种方法可以解决这个问题，一个是Batch Faulting，可以将所有想要载入的fault对象扔个一个predicate，然后将predicate的ruturnObjectAsFault设置成NO，这样就能一次激活这些faults。另一种方法是prefetching，这在所有对象的关联对象都会很快被使用的情况下很实用，而且很简单，只需要利用NSFetchRequest的setRelationshipKeyPathsForPrefetching:即可，为这个消息传入一个数组，告诉MOC取这些关联对象是，直接读取数据，而不使用fault object。</p>
+
+<p> 如果持续载入过多的数据会占用很多内存，有一些方法可以降低释放不再需要的数据对象。</p>
+
+<pre><code class="`"> [moc refreshObject:aManagedObject mergeChanges:NO];
+</code></pre>
+
+<p> 调用refreshObject:mergeChanges:方法，可以使一个managedObjct变成fault，这样要少占用很多内存。
+ 发送  <code>
+ [moc reset];
+</code>消息会清空所有MOC关联的managedObject。</p></li>
 </ol>
 
 
 <h3>MagicalRecord</h3>
 
-<p><a href="https://github.com/magicalpanda/MagicalRecord">https://github.com/magicalpanda/MagicalRecord</a></p>
+<p>强大的工具来了。熟悉了CoreData的架构和使用后，我们可以借助MagicalRecord来极大简化CoreData相关的操作，作者说MagicalRecord的设计是受到了Rails的ActiveRecord的使用方式的启发，所以使用Ruby on Rails的同学应该会感到非常亲切。</p>
 
-<h3>在Analytics中的使用</h3>
-
-<ul>
-<li>为什么要用CoreData</li>
-<li>内存管理、性能上的注意事项</li>
-</ul>
-
+<p>源代码地址：<a href="https://github.com/magicalpanda/MagicalRecord">https://github.com/magicalpanda/MagicalRecord</a></p>
 
 <h3>深入阅读</h3>
 
@@ -201,6 +225,8 @@
 <h4>References</h4>
 
 <p>《Core Data Programming Guide》<a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreData/ChangeManagement.html#//apple_ref/doc/uid/TP40001075-CH22-SW1">https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreData/ChangeManagement.html#//apple_ref/doc/uid/TP40001075-CH22-SW1</a></p>
+
+<p>《Core Data Model Versioning and Data Migration Programming Guide》 <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/CoreDataVersioning/Articles/vmLightweightMigration.html#//apple_ref/doc/uid/TP40004399-CH4-SW1">https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/CoreDataVersioning/Articles/vmLightweightMigration.html#//apple_ref/doc/uid/TP40004399-CH4-SW1</a></p>
 </div>
 
 
