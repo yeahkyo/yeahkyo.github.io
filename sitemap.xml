@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://yeahkyo.github.io/blog/2016/02/05/core-data/</loc>
+    <lastmod>2016-02-05T16:06:31+08:00</lastmod>
+  </url>
+  <url>
     <loc>http://yeahkyo.github.io/blog/2015/11/02/css3-transition/</loc>
     <lastmod>2015-11-02T11:50:05+08:00</lastmod>
   </url>
@@ -10,6 +14,12 @@
   </url>
   <url>
     <loc>http://yeahkyo.github.io/blog/archives/</loc>
+  </url>
+  <url>
+    <loc>http://yeahkyo.github.io/archives/</loc>
+  </url>
+  <url>
+    <loc>http://yeahkyo.github.io/blog/</loc>
   </url>
   <url>
     <loc>http://yeahkyo.github.io/</loc>
