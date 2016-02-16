@@ -4,7 +4,7 @@
 
 url: http://yeahkyo.github.io
 title: Yeah,
-subtitle: .
+subtitle: 
 author: Yeah
 simple_search: https://www.google.com/search
 description:
@@ -74,7 +74,7 @@ twitter_user:
 twitter_tweet_button: true
 
 # Google +1
-google_plus_one: false
+google_plus_one: 
 google_plus_one_size: medium
 
 # Google Plus Profile
@@ -95,7 +95,7 @@ disqus_short_name: yeahengineer
 disqus_show_comment_count: false
 
 # Google Analytics
-google_analytics_tracking_id:
+google_analytics_tracking_id: UA-73839746-1
 
 # Facebook Like
 facebook_like: false

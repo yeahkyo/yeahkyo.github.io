@@ -1,0 +1,153 @@
+---
+layout: post
+title: "谈一谈CoreData"
+date: 2016-02-05 16:06:31 +0800
+comments: true
+categories: [iOS]
+
+---
+
+最近在写客户端的数据搜集工具YZAnalytics，随后也希望能开源出来让大家可以配合一些后端工具集（如ELK）快速地定制一个自己的数据分析系统。
+
+客户端这一边需要在本地做一些数据的存储，希望用CoreData来做，之前没有深入地使用过CoreData，所以想先近距离好好了解一下CoreData。
+
+这一篇主要讲讲CoreData到底能为我们提供什么帮助、大致架构是什么样的；了解怎样配置和进行基本的操作；关于多线程和性能方面的实践方式。 
+<!--more-->
+
+###CoreData可以解决什么问题
+首先简单看一看CoreData作为一个「产品」能满足我们怎样的需求。
+  
+1. 持久化存储
+
+	持久化存储是开发者最基础需求之一，CoreData在存储层面支持SQLite、XML、Binary多种存储方式。使用CoreData可以免去我们直接操作数据库或者文件的那些繁琐操作。  
+实现持久化这一层的功能主要涉及两个类，NSPersistentStore和NSPersistentStoreCoordinator，它们为不同类型的存储格式封装了一套统一的接口。
+
+2. ORM(Object Relational Mapping)
+
+	通过继承NSManagedObject类，我们可以借助CoreData完成数据字段到对象属性的映射，然后直接操作对象属性。
+
+3. 关系数据
+
+	CoreData加上SQLite可以帮助我们在客户端使用关系数据库处理比较复杂的需求。
+
+4. Lazy loading
+	
+	CoreData运用一种叫Faulting的技术，对NSManagedObject的属性、甚至是关联的NSManagedObject对象做了lazy loading。为我们有效的减少了不必要的内存使用。
+	
+	举个例子，我们从数据库读取了一个Person对象，它有一个属性是company，对应的另一张叫Company的表里的数据，在我们真正使用company属性之前，person的company指向的其实是一个壳对象(fault)，它并没有加载对应的Company表条目里的数据。
+	
+	另外提一点的是Uniquing，CoreData为我们保证了对应相同数据的壳对象也会是唯一的，这样就不会出现同一个company的很多个person，在company被真正加载之前指向的却使不同对象。
+
+5. Validation
+
+	在ManagedModel的编辑页面我们可以对每个属性加一些constraints，比如最小值、最大值。之后我们可以用 validateValue:forKey:error: 方法来对做validation。
+	如果想对一些属性做更复杂的自定义验证，比如age，实现下面这个方法就可以:
+   	
+	```
+	- (BOOL)validateValue:(inout id _Nullable *)ioValue
+               forKey:(NSString *)key
+                error:(out NSError * _Nullable *)outError;
+
+	```
+	当我们在调用validateValue:forKey:error:时，它不仅会做默认的constraints验证，还会在运行时自动寻找我们的这些自定义验证。
+
+6. Change tracking和undo、redo、rollback
+	
+	NSManagedObjectContext(MOC)维护着与它关联的ManagedObject的修改记录与当前状态，每一个MOC都拥有一个NSUndoManager，它支持着我们对数据操作的undo、redo、reset、rollback这些操作。
+	如果你完全不需要这些操作，应该考虑把MOC的undoManager设置为nil，这样可以节省不少内存，也省去CoreData做一些不必要的操作。
+
+7. 版本管理、数据迁移
+
+	支持数据版本管理，在应用上线后快速迭代过程中，难以避免会改变数据格式。
+
+8. 多线程
+
+9. 数据与UI绑定
+
+	我们可以利用NSFetchResultsController轻松地将TableView与CoreData的数据做绑定。数据的变化也可以利用NSFetchResultsÇontroller的回调更新到TableView上。
+	由于涉及到更新UI的操作，这里用到的MOC一定得是在MainQueue上运行的。
+
+10. 支持KVO、KVC
+
+11. 同步iCloud
+
+###CoreData怎么用
+
+快速介绍一下怎么开始使用CoreData吧。
+
+1. 在Target的Build Phases -> Link Binary With Libraries中，引入CoreData.framework
+
+2. 添加一个.xcdatamodeld文件，它对应着NSManagedObjectModel，用来描述一组数据的结构。在这里可以使用图形界面增加Entity，也就是对应的NSEntityDescription，用来描述一个一个的数据对象模型，Entity中可以添加NSPropertyDescription，既Attributes、Relationships和FetchedProperties。属性的默认范围等也可以在右侧的面板中设置。
+
+3. 接下来利用刚刚添加的xcdatamodeld文件创建一个NSManagedObjectModel，然后用这个Object Model构建一个NSPersistentStoreCoordinator，还需要为这个StoreCoordinator配置一个文件用来存储最终数据。想下面伪代码描述了关键的步骤。
+
+	```
+    NSManagedObjectModel *managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelFileURL];
+    NSPersistentStoreCoordinator *persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:managedObjectModel];
+    NSURL *storeURL = [directoryYouWantToStore URLByAppendingPathComponent:@"database.sqlite"];
+    [persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error];
+
+	```
+
+4. 有了persistentStoreCoordinator就容易构造NSManagedObjectContext了
+
+	```
+	NSManagedObjectContext *managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+    [managedObjectContext setPersistentStoreCoordinator:persistentStoreCoordinator];
+	```
+
+6. NSFetchRequest、NSPredicate
+
+	数据操作无非就是增删改查，这里我们虽然选择了SQLite作为存储介质，但是并不直接使用SQL来与数据库交互，数据的修改、创建、删除都可以借由NSManagedObject和NSManagedObjectContext来完成。而读取操作需要使用到NSFetchRequest和NSPredicate，他们可以完成对特定数据的读取、排序等操作。对于SQLite存储，最终这些查询会转换成SQL语句交给SQLite来执行，而对于其他的存储介质，这些功能将以纯Cocoa的方式实现，比如说用到字符串大小比较来完成排序等。所以，SQLite在实际生产环境中使用应该是可以得到一个比较快的存取速度的。
+
+
+###对数据的操作
+1. create
+	
+	利用NSEntityDescription的insertNewObjectForEntityName:inManagedObjectContext:方法，在指定的MOC上创建一个新的Managed Object对象，然后就可以操作这个对象的各种属性，最后save对应的MOC就可以将操作保存到文件了。
+	
+2. fetch
+	
+	调用MOC的excuteFetchRequest:error:方法会返回一个NSManagedObject的数组，对应这fetchRequest中描述的读取条件。
+	NSFetchRequest的使用也是很方便的，根据entityName就可以构造一个fetchRequest，然后可以通过fetchLimit限制读取数量，绑定predicate来增加限制条件等。
+	
+3. update
+	
+	修改数据其实就是在读取到了指定的数据并映射到managedObject后，直接对对象进行操作，然后save其对应的MOC就行。
+
+4. delete
+	
+	直接利用MOC的deleteObject:方法即可在context删除指定对象，最后也不要忘记save context。
+		
+
+###Advanced Topic
+1. Concurrcy
+
+
+2. 数据一致性
+
+	如果涉及多个MOC操作同一个Managed Object的情况，就要留心数据一致性的问题了，就像我们合并代码一样，需要告诉MOC一个mergePolicy。默认情况的策略是NSErrorMergePolicy，一旦出现conflict会在userInfo的conflictList字段返回一个冲突列表，告诉我们哪些属性已经被修改过了，你可以把这些信息转达给用户，或者手动做一些操作后再保存。
+	另外四种策略可以让MOC自动帮我们选择合适的数据保存。	NSMergeByPropertyStoreTrumpMergePolicy:当出现冲突时，保留数据库里已有的数据。
+	NSMergeByPropertyObjectTrumpMergePolicy:当出现冲突时，保留当前MOC管理的数据。
+	NSOverwriteMergePolicy:无视数据库里的数据版本，直接用当前MOC数据覆盖。
+	NSRollbackMergePolicy:如果出现冲突就丢弃当前MOC数据的修改。
+
+3. 性能优化
+	
+	If you do not intend to use Core Data’s undo functionality, you can reduce your application's resource requirements by setting the context’s undo manager to nil. This may be especially beneficial for background worker threads, as well as for large import or batch operations.
+	
+	NSFetchResultsController cache
+
+###MagicalRecord
+https://github.com/magicalpanda/MagicalRecord
+
+### 在Analytics中的使用
+* 为什么要用CoreData
+* 内存管理、性能上的注意事项
+
+###深入阅读
+想更深入的了解CoreData的一些特性和原理，可以看看《Pro Core Data for iOS》。
+豆瓣链接：http://book.douban.com/subject/10205854/
+
+####References
+《Core Data Programming Guide》https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreData/ChangeManagement.html#//apple_ref/doc/uid/TP40001075-CH22-SW1
